@@ -26,12 +26,11 @@ async def send_message_to_tg(bot) -> None:
         channel_id = CHANNEL_ID
         licenses_data = db.show_db()
         for data in licenses_data:
-            print(data[-1])
             #Если вышла полностью
             if data[-1] == "Ready":
                 await bot.send_message(channel_id, 
                                        f"{data[1]}\n{data[2]}\n{data[3]}\n\nГотово\n")
-                db.delete_record_from_db(data[0])
+                #db.delete_record_from_db(data[0])
 
             elif data[-1] == "Car":
                 #Если вышла только на машину

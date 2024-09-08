@@ -44,10 +44,14 @@ def check_licenses():
         if check_car_license(driver, car_number):
             #Проверяем лицензию на перевозчка
             if check_carier_license(driver, car_number):
-                #Если она тоже есть, то ставим статус Ready
-                db.add_license_status(car_number, "Ready")
+                #Если она тоже есть и лицензия на машину привязана к перовзчику, то ставим статус Ready
+                registry_status = db.get_registry_status(car_number)
+                if registry_status == "Added":
+                    db.add_license_status(car_number, "Ready")
+                else:
+                    db.add_license_status(car_number, "Car")
+
             else:
-                #Если нет, ставим статус Car (вышла только на машину)
                 db.add_license_status(car_number, "Car")
     driver.quit()
 
@@ -55,10 +59,10 @@ def check_licenses():
 async def start_checking():
     #schedule.every().day.at("09:55").do(check_licenses)
     #schedule.every().day.at("14:20").do(check_licenses)
-    #schedule.every().day.at("17:20").do(check_licenses)
+    schedule.every().day.at("14:05").do(check_licenses)
     while True:
-        check_licenses()
-        #schedule.run_pending()
-        await asyncio.sleep(500)
+        #check_licenses()
+        schedule.run_pending()
+        await asyncio.sleep(10)
 
 

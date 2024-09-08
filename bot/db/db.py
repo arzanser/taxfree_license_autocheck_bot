@@ -17,6 +17,7 @@ def connect_to_db() -> None:
                 client_car_number TEXT,
                 region TEXT,
                 inn_number TEXT,
+                registry_status TEXT,
                 status TEXT
                 )
                 """)
@@ -89,6 +90,18 @@ def add_inn_to_db(inn_number, car_number) -> None:
                    , (inn_number, id))
     db.commit()
 
+
+def add_to_registry_to_db(car_number, status) -> None:
+    id = get_id_client(car_number)
+    connect_to_db()
+    cursor.execute("""
+                   UPDATE Clients
+                   SET registry_status=?
+                   WHERE client_id=?"""
+                   , (status, id))
+    db.commit()
+
+
 def add_license_status(car_number, status) -> None:
     id = get_id_client(car_number)
     connect_to_db()
@@ -129,17 +142,25 @@ def get_car_numbers() -> list:
 #     db.commit()
 
 def get_inn_number(car_number):
-    try:
-        cursor.execute("""
-                    SELECT inn_number
-                    From Clients
+    cursor.execute("""
+                SELECT inn_number
+                From Clients
+                WHERE client_car_number=?"""
+                , (car_number,))
+    inn_number = cursor.fetchall()[0][0]
+    db.commit()
+    return inn_number
+    
+
+def get_registry_status(car_number):
+    cursor.execute("""
+                    SELECT registry_status
+                    FROM Clients
                     WHERE client_car_number=?"""
                     , (car_number,))
-        inn_number = cursor.fetchall()[0][0]
-        db.commit()
-        return inn_number
-    except:
-        return False
+    status = cursor.fetchall()[0][0]
+    db.commit()
+    return status
                    
 
 
