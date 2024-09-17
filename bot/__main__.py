@@ -28,12 +28,10 @@ async def main() -> None:
         send_license_status_to_tg.router
     )
 
-    check_license = asyncio.create_task(autocheck.start_checking())
-    send_status = asyncio.create_task(send_license_status_to_tg.send_message_to_tg(bot))
+    check_license = asyncio.create_task(autocheck.start_checking(bot))
 
     await asyncio.gather(
         check_license,
-        send_status,
         bot.delete_webhook(drop_pending_updates=True),
         dp.start_polling(
             bot,

@@ -6,6 +6,7 @@ from selenium.webdriver.firefox.options import Options
 
 from bot.config import *
 from bot.db import db
+from bot.services import send_license_status_to_tg
 from bot.utils import (check_mosreg_license, check_mosru_license)
 
 
@@ -56,13 +57,14 @@ def check_licenses():
     driver.quit()
 
 
-async def start_checking():
-    #schedule.every().day.at("09:55").do(check_licenses)
-    #schedule.every().day.at("14:20").do(check_licenses)
-    schedule.every().day.at("14:05").do(check_licenses)
+async def start_checking(bot):
+    schedule.every().day.at("09:55").do(check_licenses)
+    schedule.every().day.at("14:20").do(check_licenses)
+    schedule.every().day.at("16:36").do(check_licenses)
     while True:
-        #check_licenses()
         schedule.run_pending()
+        #Отправляем на тг канал
+        await send_license_status_to_tg.send_message_to_tg(bot)
         await asyncio.sleep(10)
 
 
